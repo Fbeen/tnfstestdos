@@ -1,45 +1,45 @@
 # tnfstestdos
 
-Uitgebreide DOS filesystem test voor [tnfsdrv](https://github.com/Fbeen/tnfsdos) — maar werkt op elke DOS drive.
+Comprehensive DOS filesystem test for [tnfsdrv](https://github.com/Fbeen/tnfsdos) — but works on any DOS drive.
 
-## Wat doet het?
+## What does it do?
 
-`TNFSTEST.EXE` test alle standaard DOS bestandssysteem-functies via INT 21h. Het programma maakt een submap `TNFSTEST` aan op de opgegeven drive, voert daar alle tests uit en ruimt daarna alles weer op.
+`TNFSTEST.EXE` tests all standard DOS filesystem functions via INT 21h. It creates a subdirectory `TNFSTEST` on the specified drive, runs all tests there, and cleans up completely afterwards.
 
-De tests zijn geschreven als puur DOS-programma: het weet niets van TNFS of andere netwerkprotocollen. Daardoor kun je het zowel op een lokale harde schijf als op een TNFS virtual drive draaien.
+The program is written as a pure DOS application with no knowledge of TNFS or any network protocol. This means it can be used to test both a local hard disk and a TNFS virtual drive mapped by tnfsdrv.
 
-### Geteste functies
+### Tested functions
 
-| Sectie | DOS functie | INT 2Fh AL | Omschrijving |
-|--------|-------------|------------|--------------|
-| 1 | AH=3Ch / AH=40h | 17h / 09h | Bestand aanmaken en schrijven |
-| 2 | AH=3Dh / AH=3Fh / AH=42h | 16h / 08h / 21h | Openen, lezen, seekken |
-| 3 | AH=42h SEEK_END + AH=40h | 21h / 09h | Append (toevoegen aan einde) |
-| 4 | AH=43h GET/SET | 0Fh / 0Eh | Bestandsattributen (ook read-only) |
-| 5 | AH=36h | 0Ch | Vrije schijfruimte opvragen |
+| Section | DOS function | INT 2Fh AL | Description |
+|---------|-------------|------------|-------------|
+| 1 | AH=3Ch / AH=40h | 17h / 09h | Create file and write |
+| 2 | AH=3Dh / AH=3Fh / AH=42h | 16h / 08h / 21h | Open, read, seek (SET / CUR / END) |
+| 3 | AH=42h SEEK_END + AH=40h | 21h / 09h | Append (write at end of file) |
+| 4 | AH=43h GET/SET | 0Fh / 0Eh | File attributes (including read-only) |
+| 5 | AH=36h | 0Ch | Disk free space |
 | 6 | AH=39h / AH=3Bh / AH=47h | 02h / 05h / 03h | Mkdir, chdir, getcwd, rmdir |
 | 7 | AH=4Eh / AH=4Fh | 1Bh / 1Ch | FindFirst / FindNext (wildcards) |
-| 8 | AH=41h | 13h | Bestand verwijderen |
-| 9 | AH=56h | 07h | Bestand hernoemen |
-| 10 | AH=57h GET/SET | — | Bestandsdatum en -tijd |
-| 11 | AH=40h CX=0 | 09h | Truncate (afkappen op huidige positie) |
-| 12 | — | — | Meerdere bestanden tegelijk open |
-| 13 | — | — | Grote I/O (4096 bytes in één keer) |
-| 14 | — | — | Binaire data (alle 256 byte-waarden, incl. 0x00, 0x0D, 0x0A, 0x1A) |
-| 15 | — | — | Geneste mappen (twee niveaus diep) |
-| 16 | — | — | Verwachte foutcodes (niet-bestaand, al-bestaand, ongeldige handle) |
+| 8 | AH=41h | 13h | Delete file |
+| 9 | AH=56h | 07h | Rename file |
+| 10 | AH=57h GET/SET | — | File date and time |
+| 11 | AH=40h CX=0 | 09h | Truncate (cut file at current position) |
+| 12 | — | — | Multiple files open simultaneously |
+| 13 | — | — | Large I/O (4096 bytes in one call) |
+| 14 | — | — | Binary data (all 256 byte values, including 0x00, 0x0D, 0x0A, 0x1A) |
+| 15 | — | — | Nested directories (two levels deep) |
+| 16 | — | — | Expected error conditions (non-existent file, duplicate dir, invalid handle) |
 
-Elke test geeft `PASS` of `FAIL`. Optionele functies die mogelijk niet geïmplementeerd zijn (zoals truncate op TNFS) geven `OK` of `NOTE` — een `NOTE` telt niet mee als fout.
+Each test reports `PASS` or `FAIL`. Optional functions that may not be implemented (e.g. truncate on TNFS) report `OK` or `NOTE` — a `NOTE` does not count as a failure.
 
-## Compileren
+## Building
 
-Vereist [OpenWatcom](https://github.com/open-watcom/open-watcom-v2) (16-bit DOS, small model).
+Requires [OpenWatcom](https://github.com/open-watcom/open-watcom-v2) (16-bit DOS, small model).
 
 ```
 make
 ```
 
-De executable verschijnt in `build/tnfstest.exe`.
+The executable is written to `build/tnfstest.exe`.
 
 ### Compiler flags
 
@@ -47,35 +47,35 @@ De executable verschijnt in `build/tnfstest.exe`.
 wcc -bt=dos -ms -3 -s -wx
 ```
 
-| Flag | Betekenis |
-|------|-----------|
-| `-bt=dos` | DOS doelplatform |
+| Flag | Meaning |
+|------|---------|
+| `-bt=dos` | DOS target platform |
 | `-ms` | Small memory model |
-| `-3` | 80386 instructieset |
-| `-s` | Geen stack-overflow check |
-| `-wx` | Alle waarschuwingen aan |
+| `-3` | 80386 instruction set |
+| `-s` | No stack overflow check |
+| `-wx` | All warnings enabled |
 
-## Gebruik
+## Usage
 
 ```
 TNFSTEST [drive]
 ```
 
-| Commando | Testlocatie |
-|----------|-------------|
+| Command | Test location |
+|---------|---------------|
 | `TNFSTEST C:` | `C:\TNFSTEST\` |
 | `TNFSTEST D:` | `D:\TNFSTEST\` |
 | `TNFSTEST N:` | `N:\TNFSTEST\` |
-| `TNFSTEST` | `.\TNFSTEST\` (huidige drive) |
+| `TNFSTEST` | `.\TNFSTEST\` (current drive) |
 
-Het programma:
-1. Slaat de huidige werkmap op
-2. Maakt `[drive]:\TNFSTEST\` aan (hergebruikt als die al bestaat)
-3. Voert alle 16 testsecties uit, met een pauze van 0,5 seconde ertussen
-4. Ruimt alle aangemaakte bestanden en mappen op
-5. Herstelt de werkmap naar de oorspronkelijke locatie
+The program:
+1. Saves the current working directory
+2. Creates `[drive]:\TNFSTEST\` (reuses it if it already exists)
+3. Runs all 16 test sections with a 0.5 second pause between each
+4. Cleans up all created files and directories
+5. Restores the working directory to its original location
 
-## Uitvoer
+## Sample output
 
 ```
 TNFSTEST - Uitgebreide DOS filesystem test
@@ -93,8 +93,8 @@ RESULTAAT: 88 geslaagd, 0 mislukt, 0 nota
 ==========================================
 ```
 
-Op een lokale DOS harde schijf worden alle tests verwacht te slagen (0 mislukt). Op een TNFS virtual drive via tnfsdrv kunnen sommige optionele functies een `NOTE` geven als ze nog niet geïmplementeerd zijn in de driver.
+On a local DOS hard disk all tests are expected to pass (0 failures). On a TNFS virtual drive via tnfsdrv, optional functions may report `NOTE` if they are not yet implemented in the driver.
 
-## Relatie met tnfsdrv
+## Relation to tnfsdrv
 
-Dit testprogramma is ontwikkeld als onderdeel van het [tnfsdrv](https://github.com/Fbeen/tnfsdos) project — een DOS TSR die via het TNFS-protocol een netwerkschijf emuleert als DOS drive. Door `TNFSTEST` eerst op een lokale schijf te draaien (0 fouten) en daarna op de TNFS drive, zie je direct welke INT 2Fh subfuncties nog ontbreken of afwijken in de driver.
+This test program was developed as part of the [tnfsdrv](https://github.com/Fbeen/tnfsdos) project — a DOS TSR that emulates a network disk as a DOS drive using the TNFS protocol. By running `TNFSTEST` first on a local drive (0 failures) and then on the TNFS drive, you can immediately see which INT 2Fh subfunctions are missing or behaving incorrectly in the driver.
