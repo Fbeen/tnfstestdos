@@ -1,6 +1,6 @@
 # tnfstestdos
 
-Comprehensive DOS filesystem test for [tnfsdrv](https://github.com/Fbeen/tnfsdos) — but works on any DOS drive.
+Comprehensive DOS filesystem test for [tnfsdrv](https://github.com/RetroLoft/tnfs-dos-virtualdrive) — but works on any DOS drive.
 
 ## What does it do?
 
@@ -97,4 +97,4 @@ On a local DOS hard disk all tests are expected to pass (0 failures). On a TNFS 
 
 ## Relation to tnfsdrv
 
-This test program was developed as part of the [tnfsdrv](https://github.com/Fbeen/tnfsdos) project — a DOS TSR that emulates a network disk as a DOS drive using the TNFS protocol. By running `TNFSTEST` first on a local drive (0 failures) and then on the TNFS drive, you can immediately see which INT 2Fh subfunctions are missing or behaving incorrectly in the driver.
+This test program was developed as part of the [tnfsdrv](https://github.com/RetroLoft/tnfs-dos-virtualdrive) project — a DOS TSR that emulates a network disk as a DOS drive using the TNFS protocol. By running `TNFSTEST` first on a local drive (0 failures) and then on the TNFS drive, you can immediately see which INT 2Fh subfunctions are missing or behaving incorrectly in the driver.
